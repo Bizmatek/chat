@@ -27,22 +27,36 @@ public class ClientHandler {
         }
 
         //try to authenticate
-        while(true){
-            try{
+        while (true) {
+            try {
                 String str = inputStream.readUTF();
-                if(str.startsWith("/auth")){
+                if (str.startsWith("/auth")) {
                     String[] token = str.split("\\s");
                     nickName = server.auth(token[1], token[2]);
-                    if(nickName != null){
-                        System.out.printf("Client %s has been authorized", nickName);
+                    if (nickName != null) {
+                        System.out.printf("Client %s has been authorized \n", nickName);
                         sendMessage("/authok " + nickName);
                         server.subscribe(this);
                         break;
-                    } else{
-                        System.out.println("Unable to authenticate: invalid login/password");
+                    } else {
+                        System.out.println("Unable to authenticate: invalid login/password \n");
                     }
                 }
-            } catch (IOException e){
+                if (str.startsWith("/reg")) {
+                    String[] token = str.split("\\s");
+                    if (token.length != 4) {
+                        continue;
+                    }
+                    boolean isRegistration = server.getAuthService().registration(token[1], token[2], token[3]);
+
+                    if(isRegistration){
+                        sendMessage("/regok");
+                    } else {
+                        sendMessage("/regno");
+                    }
+
+                }
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
@@ -55,13 +69,12 @@ public class ClientHandler {
                         break;
                     }
 
-                    if(str.startsWith("/w ")){
+                    if (str.startsWith("/w ")) {
                         String recipient = str.split("\\s")[1];
                         String msg = str.replace(str.split("\\s")[0], "").replace(str.split("\\s")[1], "");
                         server.sendDirect(this, recipient, msg);
                         continue;
                     }
-
                     server.sendBroadcast(this, str);
                 } catch (IOException e) {
                     e.printStackTrace();

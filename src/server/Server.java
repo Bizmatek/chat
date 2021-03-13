@@ -36,10 +36,12 @@ public class Server {
 
     public void subscribe(ClientHandler clientHandler) {
         clientsList.add(clientHandler);
+        broadcastClientList();
     }
 
     public void unsubscribe(ClientHandler clientHandler) {
         clientsList.remove(clientHandler);
+        broadcastClientList();
     }
 
     public void sendBroadcast(ClientHandler sender, String msg) {
@@ -55,5 +57,23 @@ public class Server {
 
     public String auth(String login, String password) {
         return authService.getLoginByLoginAndPassword(login, password);
+    }
+
+    public AuthService getAuthService() {
+        return authService;
+    }
+
+    private void broadcastClientList() {
+        StringBuilder sb = new StringBuilder("/clientsList ");
+        clientsList.stream()
+                .forEach(c -> sb.append(c.getNickName()).append(" "));
+//        for (ClientHandler c : clientsList) {
+//            sb.append(c.getNickName()).append(" ");
+//        }
+        String msg = sb.toString();
+        clientsList.forEach(c -> c.sendMessage(msg));
+//        for (ClientHandler c : clientsList) {
+//            c.sendMessage(msg);
+//        }
     }
 }
