@@ -67,13 +67,8 @@ public class Server {
         StringBuilder sb = new StringBuilder("/clientsList ");
         clientsList.stream()
                 .forEach(c -> sb.append(c.getNickName()).append(" "));
-//        for (ClientHandler c : clientsList) {
-//            sb.append(c.getNickName()).append(" ");
-//        }
         String msg = sb.toString();
         clientsList.forEach(c -> c.sendMessage(msg));
-//        for (ClientHandler c : clientsList) {
-//            c.sendMessage(msg);
-//        }
+
     }
 }

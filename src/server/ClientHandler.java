@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 
 public class ClientHandler {
     private Server server;
@@ -20,6 +21,7 @@ public class ClientHandler {
         this.server = server;
         this.socket = socket;
         try {
+            socket.setSoTimeout(10000);
             inputStream = new DataInputStream(socket.getInputStream());
             outputStream = new DataOutputStream(socket.getOutputStream());
         } catch (IOException e) {
@@ -36,6 +38,7 @@ public class ClientHandler {
                     if (nickName != null) {
                         System.out.printf("Client %s has been authorized \n", nickName);
                         sendMessage("/authok " + nickName);
+                        socket.setSoTimeout(0);
                         server.subscribe(this);
                         break;
                     } else {
@@ -49,13 +52,15 @@ public class ClientHandler {
                     }
                     boolean isRegistration = server.getAuthService().registration(token[1], token[2], token[3]);
 
-                    if(isRegistration){
+                    if (isRegistration) {
                         sendMessage("/regok");
                     } else {
                         sendMessage("/regno");
                     }
 
                 }
+            } catch (SocketTimeoutException e) {
+                break;
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -76,7 +81,9 @@ public class ClientHandler {
                         continue;
                     }
                     server.sendBroadcast(this, str);
-                } catch (IOException e) {
+                } catch (SocketTimeoutException e) {
+                    break;
+                }catch (IOException e) {
                     e.printStackTrace();
                 }
 
