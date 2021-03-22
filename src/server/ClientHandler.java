@@ -36,13 +36,13 @@ public class ClientHandler {
                     String[] token = str.split("\\s");
                     nickName = server.auth(token[1], token[2]);
                     if (nickName != null) {
-                        System.out.printf("Client %s has been authorized \n", nickName);
+                        System.out.printf("Client %s has been authorized %n", nickName);
                         sendMessage("/authok " + nickName);
                         socket.setSoTimeout(0);
                         server.subscribe(this);
                         break;
                     } else {
-                        System.out.println("Unable to authenticate: invalid login/password \n");
+                        System.out.printf("Unable to authenticate: invalid login/password %n");
                     }
                 }
                 if (str.startsWith("/reg")) {
