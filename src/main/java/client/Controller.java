@@ -127,7 +127,7 @@ public class Controller implements Initializable {
 
     private void createRegWindow() {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("reg.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/reg.fxml"));
             Parent root = fxmlLoader.load();
             regStage = new Stage();
             regStage.setTitle("Reg window");

@@ -19,7 +19,8 @@ public class Server {
     }
 
     private void init() {
-        authService = new SimpleAuthService();
+        authService = new DBAuthService();
+//        authService = new SimpleAuthService();
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             System.out.println("Server started!");
             clientsList = Collections.synchronizedList(new ArrayList<>());
@@ -69,6 +70,5 @@ public class Server {
                 .forEach(c -> sb.append(c.getNickName()).append(" "));
         String msg = sb.toString();
         clientsList.forEach(c -> c.sendMessage(msg));
-
     }
 }
