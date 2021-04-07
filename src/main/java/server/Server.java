@@ -1,5 +1,7 @@
 package server;
 
+import lombok.extern.log4j.Log4j2;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -7,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Log4j2
 public class Server {
     private List<ClientHandler> clientsList;
     private final int PORT = 8189;
@@ -22,12 +25,12 @@ public class Server {
         authService = new DBAuthService();
 //        authService = new SimpleAuthService();
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
-            System.out.println("Server started!");
+            log.info("Server started!");
             clientsList = Collections.synchronizedList(new ArrayList<>());
 
             while (true) {
                 socket = serverSocket.accept();
-                System.out.println("client connected");
+                log.info("client connected");
                 new ClientHandler(this, socket);
             }
         } catch (IOException e) {

@@ -1,11 +1,14 @@
 package server;
 
+import lombok.extern.log4j.Log4j2;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 
+@Log4j2
 public class ClientHandler {
     private Server server;
     private Socket socket;
@@ -36,13 +39,13 @@ public class ClientHandler {
                     String[] token = str.split("\\s");
                     nickName = server.auth(token[1], token[2]);
                     if (nickName != null) {
-                        System.out.printf("Client %s has been authorized %n", nickName);
+                        log.info("Client %s has been authorized %n", nickName);
                         sendMessage("/authok " + nickName);
                         socket.setSoTimeout(0);
                         server.subscribe(this);
                         break;
                     } else {
-                        System.out.printf("Unable to authenticate: invalid login/password %n");
+                        log.info("Unable to authenticate: invalid login/password %n");
                     }
                 }
                 if (str.startsWith("/reg")) {
@@ -89,7 +92,7 @@ public class ClientHandler {
 
             }
             server.unsubscribe(this);
-            System.out.println("Client disconnected");
+            log.info("Client disconnected");
 
         });
         new Thread(t1).start();
